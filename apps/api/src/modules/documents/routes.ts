@@ -9,6 +9,17 @@ import { buildStorageKey, getStorage } from '../../lib/storage.js';
 const MAX_BYTES = 15 * 1024 * 1024;
 
 /**
+ * RFC 6266 / RFC 5987. Agreement filenames contain the em dash in
+ * "Single Song Collaboration Agreement — Amazing Grace Again", and a non-ASCII byte in a
+ * header value is not merely ugly — Node refuses to send it. So: an ASCII fallback for old
+ * clients, and the real name percent-encoded for everyone else.
+ */
+export function contentDisposition(filename: string): string {
+  const ascii = filename.replace(/[^\x20-\x7E]/g, '_').replace(/["\\]/g, '');
+  return `attachment; filename="${ascii}"; filename*=UTF-8''${encodeURIComponent(filename)}`;
+}
+
+/**
  * The document vault — spec §31. Files never sit in a public directory: every read is an
  * authorised API call, and every signed agreement is filed here automatically.
  */
@@ -128,10 +139,7 @@ export const documentRoutes: FastifyPluginAsyncZod = async (app) => {
 
       return reply
         .header('content-type', document.content_type)
-        .header(
-          'content-disposition',
-          `attachment; filename="${document.filename.replace(/"/g, '')}"`,
-        )
+        .header('content-disposition', contentDisposition(document.filename))
         .send(data);
     },
   );

@@ -55,7 +55,9 @@ const AdminArtistPage = lazy(() =>
   import('../features/admin/AdminArtistPage.js').then((m) => ({ default: m.AdminArtistPage })),
 );
 const AdminAgreementsPage = lazy(() =>
-  import('../features/admin/AdminAgreementsPage.js').then((m) => ({ default: m.AdminAgreementsPage })),
+  import('../features/admin/AdminAgreementsPage.js').then((m) => ({
+    default: m.AdminAgreementsPage,
+  })),
 );
 const AdminMusicPage = lazy(() =>
   import('../features/admin/AdminMusicPage.js').then((m) => ({ default: m.AdminMusicPage })),
