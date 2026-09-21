@@ -1,0 +1,216 @@
+@import 'tailwindcss';
+
+/*
+ * Altar.Camp design tokens.
+ *
+ * One palette, defined once. Nothing in the app invents a colour: components use these
+ * ramps so a change here reaches every screen. Text never uses a step below 600 on a light
+ * surface, or below 300 on a dark one — that is the contrast floor, not a preference.
+ *
+ * ink    — warm charcoal, the backbone
+ * ember  — campfire amber, the single accent that means "act"
+ * moss   — agreement, approval, money that is settled
+ * clay   — something is unresolved and must be
+ * dusk   — informational, explanatory, the teaching voice
+ */
+@theme {
+  --color-ink-50: #faf9f7;
+  --color-ink-100: #f2f0ec;
+  --color-ink-200: #e5e1da;
+  --color-ink-300: #cfc9be;
+  --color-ink-400: #a8a094;
+  --color-ink-500: #857d70;
+  --color-ink-600: #6b6357;
+  --color-ink-700: #544d43;
+  --color-ink-800: #3a352e;
+  --color-ink-900: #262220;
+  --color-ink-950: #1b1917;
+
+  --color-ember-50: #fef6ed;
+  --color-ember-100: #fce9d2;
+  --color-ember-200: #f8d0a4;
+  --color-ember-300: #f4b46f;
+  --color-ember-400: #f0a04b;
+  --color-ember-500: #e07f28;
+  --color-ember-600: #c2621b;
+  --color-ember-700: #9c4a17;
+  --color-ember-800: #7c3c19;
+  --color-ember-900: #653318;
+  --color-ember-950: #391909;
+
+  --color-moss-50: #f1f7f2;
+  --color-moss-100: #ddeee0;
+  --color-moss-200: #bcdcc3;
+  --color-moss-300: #8dc199;
+  --color-moss-400: #5aa26c;
+  --color-moss-500: #3a854f;
+  --color-moss-600: #2a6a3e;
+  --color-moss-700: #235433;
+  --color-moss-800: #1f432b;
+  --color-moss-900: #1a3724;
+  --color-moss-950: #0d1f14;
+
+  --color-clay-50: #fdf4f2;
+  --color-clay-100: #fbe5e0;
+  --color-clay-200: #f7ccc3;
+  --color-clay-300: #efa899;
+  --color-clay-400: #e37a66;
+  --color-clay-500: #d1543c;
+  --color-clay-600: #b53d28;
+  --color-clay-700: #963022;
+  --color-clay-800: #7c2a20;
+  --color-clay-900: #68271f;
+  --color-clay-950: #38110c;
+
+  --color-dusk-50: #f2f6fb;
+  --color-dusk-100: #e2ebf6;
+  --color-dusk-200: #c6d8ee;
+  --color-dusk-300: #9dbde1;
+  --color-dusk-400: #6d9bd0;
+  --color-dusk-500: #4a7cbc;
+  --color-dusk-600: #38629e;
+  --color-dusk-700: #2f4f80;
+  --color-dusk-800: #2b446b;
+  --color-dusk-900: #283b5a;
+  --color-dusk-950: #1a2439;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Fraunces', ui-serif, Georgia, serif;
+
+  --radius-card: 1rem;
+
+  /* Page width, read by the layout shells rather than set per page. */
+  --altar-container: 76rem;
+  --altar-reading: 44rem;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-ink-50);
+    color: var(--color-ink-800);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    color: var(--color-ink-950);
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ember-600);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--color-ember-200);
+    color: var(--color-ink-950);
+  }
+
+  /* Inputs inherit the body size: 16px stops iOS zooming the page on focus. */
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .altar-container {
+    width: 100%;
+    max-width: var(--altar-container);
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+
+  @media (min-width: 40rem) {
+    .altar-container {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  .altar-reading {
+    max-width: var(--altar-reading);
+  }
+
+  /* The rendered agreement. Kept here so all three views look like one document. */
+  .altar-prose h1 {
+    font-size: 1.875rem;
+    margin-block: 0 1rem;
+  }
+  .altar-prose h2 {
+    font-size: 1.375rem;
+    margin-block: 2rem 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-ink-200);
+  }
+  .altar-prose h3 {
+    font-size: 1.0625rem;
+    margin-block: 1.5rem 0.5rem;
+  }
+  .altar-prose p {
+    margin-block: 0 0.9rem;
+  }
+  .altar-prose ul {
+    margin-block: 0 1rem;
+    padding-left: 1.15rem;
+    list-style: disc;
+  }
+  .altar-prose li {
+    margin-block: 0.25rem;
+  }
+  .altar-prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-block: 0.5rem 1.5rem;
+    font-size: 0.9375rem;
+  }
+  .altar-prose th,
+  .altar-prose td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--color-ink-200);
+  }
+  .altar-prose th {
+    background: var(--color-ink-100);
+    font-weight: 600;
+    color: var(--color-ink-900);
+  }
+  .altar-prose blockquote {
+    margin: 1.25rem 0;
+    padding: 0.875rem 1rem;
+    border-left: 3px solid var(--color-ember-500);
+    background: var(--color-ember-50);
+    color: var(--color-ink-800);
+    font-size: 0.9375rem;
+  }
+  .altar-prose blockquote p:last-child {
+    margin-bottom: 0;
+  }
+  .altar-prose code {
+    font-size: 0.85em;
+    background: var(--color-ink-100);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.25rem;
+    word-break: break-all;
+  }
+  .altar-prose hr {
+    border: 0;
+    border-top: 1px solid var(--color-ink-200);
+    margin-block: 2rem;
+  }
+}

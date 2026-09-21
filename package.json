@@ -1,0 +1,45 @@
+{
+  "name": "altar",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Altar.Camp — artist signing & mission label platform. Know what you own. Know what you share. Know where the money goes.",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build:shared": "npm run build -w @altar/shared",
+    "dev": "npm run build:shared && concurrently -n api,web -c magenta,cyan \"npm run dev -w @altar/api\" \"npm run dev -w @altar/web\"",
+    "dev:api": "npm run dev -w @altar/api",
+    "dev:web": "npm run dev -w @altar/web",
+    "build": "npm run build:shared && npm run build -w @altar/api && npm run build -w @altar/web",
+    "start": "npm run start -w @altar/api",
+    "typecheck": "npm run build:shared && npm run typecheck --workspaces --if-present",
+    "lint": "oxlint",
+    "test": "npm run build:shared && npm run test --workspaces --if-present",
+    "db:migrate": "npm run db:migrate -w @altar/api",
+    "db:seed": "npm run db:seed -w @altar/api",
+    "db:reset": "npm run db:reset -w @altar/api",
+    "docker:up": "docker compose up --build -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f --tail=100",
+    "format": "prettier --write \"**/*.{ts,tsx,css,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,css,json,md}\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "oxlint": "^1.82.0",
+    "prettier": "^3.6.2",
+    "typescript": "~5.9.3"
+  },
+  "allowScripts": {
+    "esbuild": true,
+    "fsevents@2.3.3": true,
+    "@tailwindcss/oxide": true,
+    "unrs-resolver": true
+  }
+}
