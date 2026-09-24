@@ -2,8 +2,13 @@
 #
 # Install:  cp deploy/altar.service /etc/systemd/system/ && systemctl daemon-reload
 #           systemctl enable --now altar
-# Deploy:   rsync the tree to /var/www/altar, then `systemctl restart altar`
-#           (this repo has no git remote, so there is nothing to pull on the server)
+# Deploy:   cd /var/www/altar && git pull --ff-only && systemctl restart altar
+#
+# The server tree is a clone of git@github.com:brandon95547/altarcamp.git, owned by
+# root:root like every other repo under /var/www. It began life as an rsync, which is why
+# the ownership had to be corrected: `rsync -a` preserves the SENDER's uid, so the tree
+# arrived owned by 501:20 — a uid that does not exist here — and git refused it as
+# "dubious ownership". Deploying by pull avoids that entirely.
 #
 # Runs `docker compose up` in the FOREGROUND rather than detached, so systemd owns the
 # stack: it restarts it if a container dies and the output lands in the journal. Same
