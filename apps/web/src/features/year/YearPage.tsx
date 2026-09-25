@@ -1,9 +1,12 @@
 import { SERVICES, YEAR_ACTIVITIES, type ApplicationStatus } from '@altar/shared';
 import { ArrowRight, Check } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { StatusBadge } from '../../components/ui/Badge.js';
-import { ButtonLink } from '../../components/ui/Button.js';
+import { Button, ButtonLink } from '../../components/ui/Button.js';
 import { Callout } from '../../components/ui/Callout.js';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card.js';
+import { Dialog } from '../../components/ui/Dialog.js';
 import { PageHeader, Spinner } from '../../components/ui/Misc.js';
 import { cn } from '../../lib/cn.js';
 import { useQuery } from '../../lib/useApi.js';
@@ -15,7 +18,11 @@ const STAGES: { key: ApplicationStatus; label: string; detail: string }[] = [
     label: 'Mission profile submitted',
     detail: 'Tell us who you are and what you are available for.',
   },
-  { key: 'altar_review', label: 'Altar.Camp review', detail: 'We read it properly.' },
+  {
+    key: 'altar_review',
+    label: 'Altar.Camp review',
+    detail: 'We read it properly. Nothing for you to do until we are in touch.',
+  },
   { key: 'interview', label: 'Interview', detail: 'A conversation, not a test.' },
   {
     key: 'terms_proposed',
@@ -47,6 +54,24 @@ export function YearPage() {
   const { data, loading } = useQuery<{ application: Application | null }>(
     '/artists/me/mission-application',
   );
+  const location = useLocation();
+  const navigate = useNavigate();
+  const statusRef = useRef<HTMLDivElement>(null);
+  const [thanksOpen, setThanksOpen] = useState(
+    Boolean((location.state as { submitted?: boolean } | null)?.submitted),
+  );
+
+  // Clear the flag at once, so a refresh or a Back never opens the dialog a second time.
+  useEffect(() => {
+    if (thanksOpen) navigate(location.pathname, { replace: true, state: null });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function closeThanks() {
+    setThanksOpen(false);
+    // The dialog opened with no trigger to return to, so focus lands on where the artist is.
+    statusRef.current?.focus();
+  }
   const status = data?.application?.status ?? 'started';
   const currentIndex = Math.max(
     0,
@@ -75,7 +100,52 @@ export function YearPage() {
         }
       />
 
-      <Card>
+      <Dialog
+        open={thanksOpen}
+        onClose={closeThanks}
+        tone="success"
+        icon={<Check className="size-5" aria-hidden />}
+        title="Thank you — you're done for now"
+        description="Your mission profile is with Altar.Camp. There is nothing else you need to do while we read it."
+        footer={
+          <>
+            <Button variant="secondary" onClick={closeThanks}>
+              Close
+            </Button>
+            <ButtonLink to="/documents">
+              Go to your documents
+              <ArrowRight className="size-4" aria-hidden />
+            </ButtonLink>
+          </>
+        }
+      >
+        <p className="text-sm font-semibold text-ink-900">What happens next</p>
+        <ul className="mt-1.5 grid gap-2 text-sm text-ink-700">
+          <li className="flex gap-2.5">
+            <Check className="mt-0.5 size-4 shrink-0 text-moss-600" aria-hidden />
+            <span>
+              We read your answers, then talk with you before proposing terms for your year.
+            </span>
+          </li>
+          <li className="flex gap-2.5">
+            <Check className="mt-0.5 size-4 shrink-0 text-moss-600" aria-hidden />
+            <span>
+              When it moves forward you get a notification in your account, and this page always
+              shows where you are.
+            </span>
+          </li>
+          <li className="flex gap-2.5">
+            <Check className="mt-0.5 size-4 shrink-0 text-moss-600" aria-hidden />
+            <span>You can still change your answers until terms are proposed.</span>
+          </li>
+        </ul>
+        <p className="mt-4 text-sm text-ink-700">
+          While you wait, your documents vault is where masters, artwork and tax forms go — anything
+          your deal will depend on.
+        </p>
+      </Dialog>
+
+      <Card ref={statusRef} tabIndex={-1} className="outline-offset-4">
         <CardHeader title="Where you are" action={<StatusBadge status={status} />} />
         <CardBody>
           <ol className="grid gap-3">

@@ -115,7 +115,8 @@ export function MissionApplicationPage() {
           disabled={save.pending || missing.length > 0}
           onClick={async () => {
             const result = await save.run(true);
-            if (result) navigate('/year');
+            // The year page opens its "you're done for now" dialog from this state.
+            if (result) navigate('/year', { state: { submitted: true } });
           }}
         >
           {save.pending ? 'Sending…' : 'Submit to Altar.Camp'}
