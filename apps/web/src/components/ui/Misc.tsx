@@ -18,7 +18,7 @@ export function PageHeader({
     <header className={cn('mb-6 flex flex-wrap items-end justify-between gap-4', className)}>
       <div className="min-w-0">
         {eyebrow ? (
-          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-ember-700">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-eyebrow text-ember-700">
             {eyebrow}
           </p>
         ) : null}

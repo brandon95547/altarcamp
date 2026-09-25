@@ -14,7 +14,7 @@ export function LearnPage() {
   return (
     <div className="altar-container py-14">
       <header className="altar-reading">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-ember-700">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-eyebrow text-ember-700">
           Learn the terms
         </p>
         <h1 className="text-4xl sm:text-5xl">The words the industry uses, in plain English</h1>
@@ -35,7 +35,7 @@ export function LearnPage() {
             <li key={lesson.slug}>
               <Card className="h-full">
                 <CardBody>
-                  <span className="font-display text-3xl text-ember-600">{index + 1}</span>
+                  <span className="text-3xl font-extrabold text-ember-600">{index + 1}</span>
                   <h3 className="mt-1 text-lg">{lesson.title}</h3>
                   <p className="mt-1.5 text-sm text-ink-700">{lesson.summary}</p>
                 </CardBody>

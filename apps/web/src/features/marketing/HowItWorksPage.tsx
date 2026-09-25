@@ -54,7 +54,7 @@ export function HowItWorksPage() {
   return (
     <div className="altar-container py-14">
       <header className="altar-reading">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-ember-700">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-eyebrow text-ember-700">
           How it works
         </p>
         <h1 className="text-4xl sm:text-5xl">One decision at a time</h1>

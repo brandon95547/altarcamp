@@ -144,13 +144,13 @@ export function MasterStep() {
           <CardHeader title="The two, side by side" />
           <CardBody className="grid gap-5">
             <div>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-ink-600">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-eyebrow text-ink-600">
                 Master ownership
               </p>
               <SplitBar lines={lines} />
             </div>
             <div>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-ink-600">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-eyebrow text-ink-600">
                 Songwriting ownership
               </p>
               <SplitBar lines={deal.compositionSplits} />

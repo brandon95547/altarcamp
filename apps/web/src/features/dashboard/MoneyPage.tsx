@@ -77,7 +77,7 @@ export function MoneyPage() {
                 'What has been paid, and what remains payable?',
               ].map((question, index) => (
                 <li key={question} className="flex gap-3">
-                  <span className="font-display text-xl text-ember-600">{index + 1}</span>
+                  <span className="text-xl font-extrabold text-ember-600">{index + 1}</span>
                   <span>{question}</span>
                 </li>
               ))}

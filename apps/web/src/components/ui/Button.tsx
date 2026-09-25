@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { cn } from '../../lib/cn.js';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'dark';
+type Variant =
+  'primary' | 'secondary' | 'ghost' | 'danger' | 'dark' | 'secondary-on-dark' | 'ghost-on-dark';
 type Size = 'sm' | 'md' | 'lg';
 
 const VARIANTS: Record<Variant, string> = {
@@ -12,6 +13,11 @@ const VARIANTS: Record<Variant, string> = {
   ghost: 'text-ink-700 hover:bg-ink-100 active:bg-ink-200 disabled:text-ink-400',
   danger: 'bg-clay-600 text-white hover:bg-clay-700 active:bg-clay-800 disabled:bg-clay-300',
   dark: 'bg-ink-950 text-ink-50 hover:bg-ink-800 active:bg-ink-900 disabled:bg-ink-400',
+  // The secondary and ghost roles again, for a dark surface (the marketing header).
+  'secondary-on-dark':
+    'text-ink-50 ring-1 ring-inset ring-ink-700 hover:bg-ink-800 active:bg-ink-700 disabled:text-ink-500',
+  'ghost-on-dark':
+    'text-ink-100 hover:bg-ink-800 hover:text-ink-50 active:bg-ink-700 disabled:text-ink-500',
 };
 
 const SIZES: Record<Size, string> = {
@@ -21,7 +27,7 @@ const SIZES: Record<Size, string> = {
 };
 
 const BASE =
-  'inline-flex items-center justify-center rounded-lg font-medium transition-colors disabled:cursor-not-allowed select-none';
+  'inline-flex items-center justify-center rounded-lg font-semibold transition-colors disabled:cursor-not-allowed select-none';
 
 interface CommonProps {
   variant?: Variant;

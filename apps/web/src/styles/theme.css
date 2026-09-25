@@ -5,7 +5,9 @@
  *
  * One palette, defined once. Nothing in the app invents a colour: components use these
  * ramps so a change here reaches every screen. Text never uses a step below 600 on a light
- * surface, or below 300 on a dark one — that is the contrast floor, not a preference.
+ * surface, or below 300 on a dark one — that is the contrast floor, not a preference. The one
+ * exception is ember-500 on ink-950 (6.0:1), the home hero's accent: at 400 it reads as amber
+ * against the sunrise rather than as the brand's orange.
  *
  * ink    — warm charcoal, the backbone
  * ember  — campfire amber, the single accent that means "act"
@@ -74,15 +76,36 @@
   --color-dusk-900: #283b5a;
   --color-dusk-950: #1a2439;
 
+  /* One family. Headings are Inter at a heavier weight, not a second face — see the base layer. */
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Fraunces', ui-serif, Georgia, serif;
+
+  /* A full-width marketing section heading: the step between 4xl (2.25rem) and 5xl (3rem). */
+  --text-heading: 2.5rem;
+  --text-heading--line-height: 1.1;
+
+  /* Uppercase labels — an eyebrow over a heading, a caption over a panel. One value everywhere. */
+  --tracking-eyebrow: 0.16em;
 
   --radius-card: 1rem;
+
+  /* Elevation. `card` is the resting edge every card carries; `raised` lifts a surface clear of
+     what is behind it — the two path cards that overlap the home hero. */
+  --shadow-card: 0 1px 2px color-mix(in srgb, var(--color-ink-950) 4%, transparent);
+  --shadow-raised:
+    0 1px 2px color-mix(in srgb, var(--color-ink-950) 5%, transparent),
+    0 16px 40px -12px color-mix(in srgb, var(--color-ink-950) 22%, transparent);
 
   /* Page width, read by the layout shells rather than set per page. */
   --altar-container: 76rem;
   --altar-reading: 44rem;
+
+  /* The marketing header's height. The home hero reads it too, to run up behind the bar. */
+  --altar-header: 4.5rem;
 }
+
+/* The footer drops its top gap after a page whose last section is marked data-joins-footer, so
+   a closing dark band and the footer read as one block instead of two separated by a light strip. */
+@custom-variant after-band (main:has(> [data-joins-footer]:last-child) + &);
 
 @layer base {
   html {
@@ -99,14 +122,23 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* Preflight resets headings to the body weight; a sans heading needs its weight back to read
+     as a heading at all. Only a hair of tracking: Inter's optical-size axis (loaded in
+     index.html) already switches large sizes to its tighter Display cut. */
   h1,
   h2,
   h3,
   h4 {
-    font-family: var(--font-display);
     color: var(--color-ink-950);
+    font-weight: 700;
+    letter-spacing: -0.01em;
     line-height: 1.15;
     text-wrap: balance;
+  }
+
+  h3,
+  h4 {
+    font-weight: 600;
   }
 
   :focus-visible {

@@ -7,7 +7,7 @@ export function MissionPage() {
   return (
     <div className="altar-container py-14">
       <header className="altar-reading">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-ember-700">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-eyebrow text-ember-700">
           The mission
         </p>
         <h1 className="text-4xl sm:text-5xl">What it means to join Altar.Camp for a year</h1>

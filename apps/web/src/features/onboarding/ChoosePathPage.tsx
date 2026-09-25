@@ -83,7 +83,9 @@ export function ChoosePathPage() {
               )}
             >
               <span className="flex items-center justify-between">
-                <span className="font-display text-3xl text-ink-950">{option.title}</span>
+                <span className="text-3xl font-bold tracking-tight text-ink-950">
+                  {option.title}
+                </span>
                 {selected ? <Check className="size-6 text-moss-600" aria-hidden /> : null}
               </span>
               <span className="mt-2 block text-ink-800">{option.lead}</span>

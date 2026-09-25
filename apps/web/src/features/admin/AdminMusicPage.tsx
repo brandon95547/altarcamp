@@ -28,7 +28,7 @@ export function AdminMusicPage() {
           <Card key={key}>
             <CardBody>
               <p className="text-sm text-ink-600">{key.replace(/_/g, ' ')}</p>
-              <p className="font-display text-3xl text-ink-950">{value}</p>
+              <p className="text-3xl font-bold tracking-tight text-ink-950 tabular-nums">{value}</p>
             </CardBody>
           </Card>
         ))}

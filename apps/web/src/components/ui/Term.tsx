@@ -60,7 +60,7 @@ export function Term({
           className="absolute left-0 top-full z-30 mt-2 block w-80 max-w-[min(20rem,calc(100vw-2rem))] rounded-lg border border-ink-200 bg-white p-4 text-left shadow-lg"
         >
           <span className="mb-1 flex items-start justify-between gap-2">
-            <span className="font-display text-base font-semibold text-ink-950">{entry.term}</span>
+            <span className="text-base font-semibold text-ink-950">{entry.term}</span>
             <button
               type="button"
               onClick={() => setOpen(false)}

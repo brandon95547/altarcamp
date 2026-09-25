@@ -91,7 +91,7 @@ export function SignupPage() {
   return (
     <div className="altar-container flex justify-center py-14">
       <div className="w-full max-w-2xl">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-ember-700">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-eyebrow text-ember-700">
           Step 1 of 5
         </p>
         <h1 className="text-3xl sm:text-4xl">Create your account</h1>
@@ -166,12 +166,7 @@ export function SignupPage() {
                 </Field>
                 <Field label="Country" required error={fieldError('country')}>
                   {(props) => (
-                    <CountrySelect
-                      {...props}
-                      required
-                      value={form.country}
-                      onChange={setCountry}
-                    />
+                    <CountrySelect {...props} required value={form.country} onChange={setCountry} />
                   )}
                 </Field>
                 <Field label="State or province" error={fieldError('region')}>

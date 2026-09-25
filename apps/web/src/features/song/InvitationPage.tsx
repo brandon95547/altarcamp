@@ -66,7 +66,7 @@ export function InvitationPage() {
   return (
     <div className="altar-container flex justify-center py-14">
       <div className="w-full max-w-xl">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-ember-700">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-eyebrow text-ember-700">
           Collaboration invitation
         </p>
         <h1 className="text-3xl sm:text-4xl">
@@ -83,7 +83,7 @@ export function InvitationPage() {
               <p className="text-sm font-medium uppercase tracking-wide text-ink-600">
                 Your songwriting ownership
               </p>
-              <p className="mt-1 font-display text-5xl text-ink-950">
+              <p className="mt-1 text-5xl font-bold tracking-tight text-ink-950">
                 {invitation.proposedBps === null ? '—' : formatBps(invitation.proposedBps)}
               </p>
             </div>

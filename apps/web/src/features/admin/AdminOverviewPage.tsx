@@ -69,7 +69,7 @@ export function AdminOverviewPage() {
                 {Object.entries(panel.data).map(([key, value]) => (
                   <div key={key} className="flex items-center justify-between gap-3">
                     <dt className="text-sm text-ink-700">{titleCase(key)}</dt>
-                    <dd className="font-display text-xl text-ink-950 tabular-nums">{value}</dd>
+                    <dd className="text-xl font-semibold text-ink-950 tabular-nums">{value}</dd>
                   </div>
                 ))}
               </dl>
