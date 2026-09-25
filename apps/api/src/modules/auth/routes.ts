@@ -1,9 +1,12 @@
 import { schemas } from '@altar/shared';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
+import { loadConfig } from '../../config.js';
 import { recordAudit } from '../../lib/audit.js';
 import { badRequest, conflict, unauthorized } from '../../lib/errors.js';
+import { sendMail } from '../../lib/mailer.js';
 import { changePassword, createArtistAccount, findUserByEmail, verifyLogin } from './service.js';
+import { welcomeEmail } from './welcome-email.js';
 
 export const authRoutes: FastifyPluginAsyncZod = async (app) => {
   app.post(
@@ -33,6 +36,13 @@ export const authRoutes: FastifyPluginAsyncZod = async (app) => {
         userAgent: request.headers['user-agent'] ?? null,
       });
       await app.startSession(user.id, request, reply);
+
+      // Not awaited: the account exists whether or not the mail server answers, so a slow or
+      // failing SMTP server neither delays the signup nor turns it into an error.
+      sendMail(welcomeEmail(user, loadConfig().PUBLIC_WEB_URL), request.log).catch((error) =>
+        request.log.error({ err: error, userId: user.id }, 'welcome email failed'),
+      );
+
       return reply.status(201).send({ user });
     },
   );

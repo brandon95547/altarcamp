@@ -26,6 +26,7 @@
     "fastify": "^5.12.3",
     "fastify-plugin": "^5.1.0",
     "fastify-type-provider-zod": "^7.0.0",
+    "nodemailer": "^10.0.10",
     "pg": "^8.16.3",
     "zod": "^4.3.5"
   },

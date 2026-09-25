@@ -52,8 +52,21 @@ const envSchema = z.object({
   ADMIN_EMAIL: z.string().default('admin@altar.camp'),
   ADMIN_PASSWORD: z.string().default('AltarCampAdmin!2026'),
 
-  /** Phase 1 prints notifications to the log instead of sending mail. */
+  /**
+   * Transactional mail (the welcome email). `log` writes each message to the log instead of
+   * sending it — development and tests; `smtp` sends through the SMTP_* account.
+   */
   MAIL_DRIVER: z.enum(['log', 'smtp']).default('log'),
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().int().min(1).max(65535).default(587),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  /** The sending address. Empty means SMTP_USER, which is the only one most providers accept. */
+  MAIL_FROM: z.string().optional(),
+  MAIL_FROM_NAME: z.string().default('Altar.Camp'),
+  /** Replies reach Altar.Camp whichever mailbox actually sent the message. */
+  MAIL_REPLY_TO: z.string().default('support@altar.camp'),
+
   PUBLIC_WEB_URL: z.string().default('http://localhost:5190'),
 });
 
@@ -66,7 +79,20 @@ let cached: AppConfig | null = null;
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   if (cached) return cached;
-  const parsed = envSchema.safeParse(env);
+  const parsed = envSchema
+    .superRefine((value, context) => {
+      if (value.MAIL_DRIVER !== 'smtp') return;
+      for (const key of ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASS'] as const) {
+        if (!value[key]) {
+          context.addIssue({
+            code: 'custom',
+            path: [key],
+            message: 'required when MAIL_DRIVER=smtp',
+          });
+        }
+      }
+    })
+    .safeParse(env);
   if (!parsed.success) {
     const problems = parsed.error.issues
       .map((issue) => `  ${issue.path.join('.')}: ${issue.message}`)

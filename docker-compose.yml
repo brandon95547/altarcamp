@@ -53,6 +53,15 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@altar.camp}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-AltarCampAdmin!2026}
       STORAGE_DIR: /data/storage
+      # Mail. MAIL_DRIVER=log writes each email to the log instead of sending it; smtp sends.
+      MAIL_DRIVER: ${MAIL_DRIVER:-log}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Altar.Camp}
+      MAIL_REPLY_TO: ${MAIL_REPLY_TO:-support@altar.camp}
     ports:
       - '${API_PORT:-4000}:4000'
     volumes:
