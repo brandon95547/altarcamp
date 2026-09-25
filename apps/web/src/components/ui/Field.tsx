@@ -18,6 +18,8 @@ interface FieldProps {
   hint?: React.ReactNode;
   error?: string | null;
   required?: boolean;
+  /** Layout only — e.g. `sm:col-span-2` to let a field take a whole row of a grid. */
+  className?: string;
   children: (props: {
     id: string;
     className: string;
@@ -27,24 +29,27 @@ interface FieldProps {
 
 /**
  * One label/hint/error wrapper for every control, so the accessible wiring is written once.
+ *
+ * Order is label, control, hint, error — the UI Bible's text-field anatomy. The hint used
+ * to sit between the label and the control, which pushed any control with a hint below its
+ * neighbour's in a two-column row: 26px on "Legal name", 46px on "Password" at signup.
+ * Below the control, every label and every control in a row share a line whatever carries
+ * a hint, and the hint still reads while the field is being typed into. The error stacks
+ * under the hint rather than replacing it — guidance is most needed at the moment of
+ * failure.
  */
-export function Field({ label, hint, error, required, children }: FieldProps) {
+export function Field({ label, hint, error, required, className, children }: FieldProps) {
   const id = useId();
   const hintId = hint ? `${id}-hint` : undefined;
   const errorId = error ? `${id}-error` : undefined;
   const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined;
 
   return (
-    <div>
+    <div className={className}>
       <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-ink-900">
         {label}
         {required ? <span className="ml-1 text-clay-600">*</span> : null}
       </label>
-      {hint ? (
-        <p id={hintId} className="mb-1.5 text-sm text-ink-600">
-          {hint}
-        </p>
-      ) : null}
       {children({
         id,
         className: cn(
@@ -53,6 +58,11 @@ export function Field({ label, hint, error, required, children }: FieldProps) {
         ),
         'aria-describedby': describedBy,
       })}
+      {hint ? (
+        <p id={hintId} className="mt-1.5 text-sm text-ink-600">
+          {hint}
+        </p>
+      ) : null}
       {error ? (
         <p id={errorId} className="mt-1.5 text-sm font-medium text-clay-700">
           {error}
@@ -62,8 +72,17 @@ export function Field({ label, hint, error, required, children }: FieldProps) {
   );
 }
 
+/**
+ * Inputs and selects share ONE height, set here rather than left to padding. A native select
+ * does not size itself from line-height the way an input does, so the same padding gave a
+ * 48px input and a 44px select — Country sat 4px short of State beside it. The Bible: a
+ * control's height is "identical to a button and a select, so a row of mixed controls
+ * shares a baseline with no per-component nudging".
+ */
+const CONTROL_HEIGHT = 'h-12';
+
 export function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} className={cn(CONTROL, props.className)} />;
+  return <input {...props} className={cn(CONTROL, CONTROL_HEIGHT, props.className)} />;
 }
 
 export function TextArea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
@@ -71,7 +90,7 @@ export function TextArea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement
 }
 
 export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select {...props} className={cn(CONTROL, 'pr-8', props.className)} />;
+  return <select {...props} className={cn(CONTROL, CONTROL_HEIGHT, 'pr-8', props.className)} />;
 }
 
 export function Checkbox({

@@ -197,7 +197,10 @@ export function SignupPage() {
                     />
                   )}
                 </Field>
+                {/* Nine fields in two columns leave one alone. The last takes the whole
+                    row rather than sitting beside an empty column. */}
                 <Field
+                  className="sm:col-span-2"
                   label="Instagram or main social profile"
                   error={fieldError('socialProfiles')}
                 >
