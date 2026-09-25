@@ -7,40 +7,60 @@
  */
 
 /**
- * A phone number, formatted as it is typed.
+ * A phone number, masked for the country it belongs to.
  *
- * DELIBERATELY NOT A US-ONLY MASK. Signup asks for a country and Altar is signing artists
- * who are not all in one, so forcing `(555) 123-4567` onto a number from Berlin is not a
- * convenience, it is corruption of the field. The rule:
+ * The country decides, because the form asks for one. The previous version guessed from
+ * the digits — ten or fewer read as American — which meant a UK number typed as
+ * "020 7946 0958" was crushed to "02079460958" and a short number from anywhere was
+ * wrapped in American parentheses. Knowing the country removes the guess.
  *
- *   - anything the user marked international with a leading `+` keeps it, and keeps its
- *     own digits, ungrouped — we do not invent spacing for a plan we cannot identify
- *   - ten digits or fewer with no `+` is read as NANP and grouped progressively
- *   - eleven digits starting with 1 is NANP with its country code
- *   - anything longer, unmarked, is almost certainly a country code typed without its `+`,
- *     and is left as digits rather than forced into a shape it is not
+ * United States: a real mask. NANP grouping, applied as it is typed, and capped at ten
+ * digits so the field stops accepting input where a US number ends. A leading 1 is always
+ * the country code — no NANP area code starts with 1 — so it becomes "+1 " rather than
+ * being read as the first digit of the area code. A leading "+" with any other code is
+ * left alone: that is a US resident giving a foreign number, and the escape hatch.
  *
- * The server stores whatever this produces (`phone` is a free string capped at 40), so the
- * mask is presentation and never a gate on what someone can enter.
+ * Everywhere else: NOT reformatted. There are dozens of national conventions and none of
+ * them is ours to impose; the number is kept exactly as typed, minus anything that is not a
+ * phone character. An unknown country is treated as "everywhere else" — imposing the US
+ * shape without knowing the country is what this function stopped doing.
+ *
+ * The API stores whatever this returns (`phone` is a free string capped at 40), so the mask
+ * is presentation and never a gate.
  */
-export function maskPhone(input: string): string {
+export function maskPhone(input: string, countryCode?: string | null): string {
+  return countryCode?.toUpperCase() === 'US' ? maskUsPhone(input) : sanitizePhone(input);
+}
+
+function maskUsPhone(input: string): string {
   const raw = (input ?? '').trim();
   if (!raw) return '';
 
-  const international = raw.startsWith('+');
-  const digits = raw.replace(/\D/g, '');
-  if (!digits) return international ? '+' : '';
+  const plus = raw.startsWith('+');
+  let digits = raw.replace(/\D/g, '');
+  if (plus && !digits.startsWith('1')) return `+${digits}`.slice(0, 40);
 
-  if (international) return `+${digits}`;
-  if (digits.length <= 3) return digits;
-  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-  if (digits.length <= 10) {
-    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  let prefix = '';
+  if (digits.startsWith('1')) {
+    prefix = '+1 ';
+    digits = digits.slice(1);
   }
-  if (digits.length === 11 && digits.startsWith('1')) {
-    return `+1 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7)}`;
-  }
-  return digits;
+  digits = digits.slice(0, 10);
+
+  if (!digits) return prefix ? '+1' : plus ? '+' : '';
+  if (digits.length <= 3) return `${prefix}${digits}`;
+  if (digits.length <= 6) return `${prefix}(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `${prefix}(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
+function sanitizePhone(input: string): string {
+  let s = (input ?? '').replace(/^\s+/, '');
+  s = s.replace(/[^\d+\-\s().]/g, '');
+  s = s.replace(/(?!^)\+/g, '');
+  // Doubled spaces collapse, but a single trailing one survives: someone typing
+  // "020 " is about to type the next group, and trimming it would fight them.
+  s = s.replace(/\s{2,}/g, ' ');
+  return s.slice(0, 40);
 }
 
 /** The digits behind a masked number, for comparing two numbers written differently. */

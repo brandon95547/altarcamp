@@ -1,9 +1,18 @@
 import { useState } from 'react';
+import { countryByName, maskPhone, phoneDigits } from '@altar/shared';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/ui/Button.js';
 import { Callout } from '../../components/ui/Callout.js';
 import { Card, CardBody } from '../../components/ui/Card.js';
-import { Checkbox, EmailInput, Field, PhoneInput, TextInput, UrlInput } from '../../components/ui/Field.js';
+import {
+  Checkbox,
+  CountrySelect,
+  EmailInput,
+  Field,
+  PhoneInput,
+  TextInput,
+  UrlInput,
+} from '../../components/ui/Field.js';
 import { ApiError } from '../../lib/api.js';
 import { useAuth } from '../../lib/auth.js';
 
@@ -31,6 +40,23 @@ export function SignupPage() {
 
   const set = (key: keyof typeof form) => (event: React.ChangeEvent<HTMLInputElement>) =>
     setForm((current) => ({ ...current, [key]: event.target.value }));
+
+  const countryCode = countryByName(form.country)?.code ?? null;
+
+  // Changing the country re-masks the number already typed, so the field agrees with the
+  // country beside it. Never by discarding digits, though: switching to the US with a
+  // number too long to be American would have the US mask cut it to ten, so a number that
+  // does not fit is left exactly as typed and the artist can see what needs correcting.
+  const setCountry = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const country = event.target.value;
+    setForm((current) => {
+      const code = countryByName(country)?.code ?? null;
+      const digits = phoneDigits(current.phone);
+      const fitsUs = digits.length <= 10 || (digits.length === 11 && digits.startsWith('1'));
+      const phone = code === 'US' && !fitsUs ? current.phone : maskPhone(current.phone, code);
+      return { ...current, country, phone };
+    });
+  };
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -120,15 +146,6 @@ export function SignupPage() {
                     />
                   )}
                 </Field>
-                <Field label="Phone" error={fieldError('phone')}>
-                  {(props) => (
-                    <PhoneInput
-                      {...props}
-                      value={form.phone}
-                      onChange={set('phone')}
-                    />
-                  )}
-                </Field>
                 <Field
                   label="Password"
                   required
@@ -149,17 +166,26 @@ export function SignupPage() {
                 </Field>
                 <Field label="Country" required error={fieldError('country')}>
                   {(props) => (
-                    <TextInput
+                    <CountrySelect
                       {...props}
                       required
-                      autoComplete="country-name"
                       value={form.country}
-                      onChange={set('country')}
+                      onChange={setCountry}
                     />
                   )}
                 </Field>
                 <Field label="State or province" error={fieldError('region')}>
                   {(props) => <TextInput {...props} value={form.region} onChange={set('region')} />}
+                </Field>
+                <Field label="Phone" error={fieldError('phone')}>
+                  {(props) => (
+                    <PhoneInput
+                      {...props}
+                      country={countryCode}
+                      value={form.phone}
+                      onChange={set('phone')}
+                    />
+                  )}
                 </Field>
                 <Field label="Website" error={fieldError('website')}>
                   {(props) => (

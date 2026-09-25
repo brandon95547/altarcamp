@@ -1,5 +1,12 @@
 import { useId } from 'react';
-import { maskPhone, normalizeEmail, normalizeWebsite, phoneDigits } from '@altar/shared';
+import {
+  COUNTRIES,
+  countryByName,
+  maskPhone,
+  normalizeEmail,
+  normalizeWebsite,
+  phoneDigits,
+} from '@altar/shared';
 import { cn } from '../../lib/cn.js';
 
 const CONTROL =
@@ -151,14 +158,15 @@ export function RadioGroup<T extends string>({
  */
 
 /**
- * Formats as it is typed. See maskPhone: international numbers are deliberately left alone
- * rather than forced into a US shape.
+ * Masked for the country the number belongs to — see maskPhone. `country` is an ISO code;
+ * the US gets a real mask, everywhere else is kept as typed minus non-phone characters.
  */
 export function PhoneInput({
   value,
   onChange,
+  country,
   ...props
-}: React.InputHTMLAttributes<HTMLInputElement>) {
+}: React.InputHTMLAttributes<HTMLInputElement> & { country?: string | null }) {
   return (
     <TextInput
       {...props}
@@ -169,17 +177,47 @@ export function PhoneInput({
       onChange={(event) => {
         const typed = event.target.value;
         const previous = String(value ?? '');
-        let masked = maskPhone(typed);
-        // Backspacing a formatting character deletes no DIGIT, so the mask puts the
-        // character straight back and the field looks frozen. Read that as deleting the
-        // digit in front of it, which is what the user meant.
+        let masked = maskPhone(typed, country);
+        // Backspacing a character the US mask INSERTED — a bracket, the dash — deletes no
+        // digit, so the mask puts it straight back and the field looks frozen. Read that as
+        // deleting the digit in front of it, which is what the user meant. Only the US mask
+        // inserts anything, so only it can freeze.
         if (typed.length < previous.length && masked === previous) {
-          masked = maskPhone(phoneDigits(typed).slice(0, -1));
+          masked = maskPhone(phoneDigits(typed).slice(0, -1), country);
         }
         event.target.value = masked;
         onChange?.(event);
       }}
     />
+  );
+}
+
+/**
+ * Every country, by name.
+ *
+ * The VALUE is the country's name, not its code, because that is what `artists.country`
+ * has always stored and what the admin screens read; switching the column to codes would
+ * make every existing row disagree with every new one. Callers that need the code — the
+ * phone mask — look it up with countryByName.
+ *
+ * A value the list does not contain is shown as its own option rather than silently
+ * dropped. A native select holding a value it has no option for DISPLAYS its first option
+ * while the state still says something else, and the form would submit what nobody saw.
+ */
+export function CountrySelect({
+  value,
+  ...props
+}: React.SelectHTMLAttributes<HTMLSelectElement> & { value: string }) {
+  const known = !value || countryByName(value) !== undefined;
+  return (
+    <Select autoComplete="country-name" {...props} value={value}>
+      {!known ? <option value={value}>{value}</option> : null}
+      {COUNTRIES.map((country) => (
+        <option key={country.code} value={country.name}>
+          {country.name}
+        </option>
+      ))}
+    </Select>
   );
 }
 
