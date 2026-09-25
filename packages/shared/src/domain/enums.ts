@@ -319,6 +319,15 @@ export const DOCUMENT_FOLDER_LABELS: Record<DocumentFolder, string> = {
   mission: 'Mission',
 };
 
+/**
+ * The vault's per-file limit in phase 1, checked by the browser before it uploads and again by
+ * the API. Uploads travel as base64 inside JSON, a third larger than the file, so the request
+ * schema is sized from this number too. Large audio moves to object storage in phase 2.
+ */
+export const DOCUMENT_MAX_BYTES = 15 * 1024 * 1024;
+export const DOCUMENT_TOO_LARGE =
+  'Files in the vault are limited to 15 MB for now. A WAV master is usually bigger than that; an MP3 of the song usually fits.';
+
 /** Notification kinds — spec §32. */
 export const NOTIFICATION_TYPES = [
   'collaborator_invited',

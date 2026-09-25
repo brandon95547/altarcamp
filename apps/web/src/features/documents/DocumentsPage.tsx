@@ -1,4 +1,10 @@
-import { DOCUMENT_FOLDERS, DOCUMENT_FOLDER_LABELS, type DocumentFolder } from '@altar/shared';
+import {
+  DOCUMENT_FOLDERS,
+  DOCUMENT_FOLDER_LABELS,
+  DOCUMENT_MAX_BYTES,
+  DOCUMENT_TOO_LARGE,
+  type DocumentFolder,
+} from '@altar/shared';
 import { Download, FileText, Lock, Trash2, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { Badge } from '../../components/ui/Badge.js';
@@ -7,8 +13,9 @@ import { Callout } from '../../components/ui/Callout.js';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card.js';
 import { Select } from '../../components/ui/Field.js';
 import { EmptyState, PageHeader, Spinner } from '../../components/ui/Misc.js';
-import { api, downloadDocument } from '../../lib/api.js';
+import { ApiError, api, downloadDocument } from '../../lib/api.js';
 import { cn } from '../../lib/cn.js';
+import { readFileAsBase64 } from '../../lib/files.js';
 import { formatDate } from '../../lib/format.js';
 import { useMutation, useQuery } from '../../lib/useApi.js';
 
@@ -39,13 +46,13 @@ export function DocumentsPage() {
   }>(folder === 'all' ? '/documents' : `/documents?folder=${folder}`, [folder]);
 
   const upload = useMutation(async (file: File) => {
-    const buffer = await file.arrayBuffer();
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+    // Refused here, before reading a byte, with the sentence the API would have used.
+    if (file.size > DOCUMENT_MAX_BYTES) throw new ApiError(413, 'too_large', DOCUMENT_TOO_LARGE);
     return api.post('/documents', {
       folder: uploadFolder,
       filename: file.name,
       contentType: file.type || 'application/octet-stream',
-      data: base64,
+      data: await readFileAsBase64(file),
     });
   });
 
@@ -124,7 +131,9 @@ export function DocumentsPage() {
                 <Upload className="size-4" aria-hidden />
                 {upload.pending ? 'Uploading…' : 'Choose a file'}
               </Button>
-              <p className="text-sm text-ink-600">Up to 15 MB per file in this phase.</p>
+              <p className="text-sm text-ink-600">
+                Up to {DOCUMENT_MAX_BYTES / 1024 / 1024} MB per file in this phase.
+              </p>
             </CardBody>
           </Card>
 

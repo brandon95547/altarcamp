@@ -55,7 +55,9 @@ async function request<T>(method: Method, path: string, body?: unknown): Promise
     throw new ApiError(
       response.status,
       error?.code ?? 'error',
-      error?.message ?? 'Something went wrong.',
+      // A 413 comes from the proxy in front of the API, as HTML rather than our JSON error.
+      error?.message ??
+        (response.status === 413 ? 'That file is too large to upload.' : 'Something went wrong.'),
       error?.details ?? [],
     );
   }

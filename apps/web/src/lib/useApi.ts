@@ -68,9 +68,14 @@ export function useMutation<TInput, TResult>(
       try {
         return await handler(input);
       } catch (caught) {
-        setError(
-          caught instanceof ApiError ? caught : new ApiError(0, 'unknown', 'Something went wrong.'),
-        );
+        if (caught instanceof ApiError) {
+          setError(caught);
+        } else {
+          // Not the API's refusal but a failure in the browser. Keep the artist's message plain,
+          // and leave the real error where whoever is debugging will look for it.
+          console.error(caught);
+          setError(new ApiError(0, 'unknown', 'Something went wrong.'));
+        }
         return null;
       } finally {
         setPending(false);

@@ -1,12 +1,10 @@
-import { DOCUMENT_FOLDERS, schemas } from '@altar/shared';
+import { DOCUMENT_FOLDERS, DOCUMENT_MAX_BYTES, DOCUMENT_TOO_LARGE, schemas } from '@altar/shared';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { query, queryOne } from '../../db/pool.js';
 import { recordAudit } from '../../lib/audit.js';
 import { badRequest, forbidden, notFound } from '../../lib/errors.js';
 import { buildStorageKey, getStorage } from '../../lib/storage.js';
-
-const MAX_BYTES = 15 * 1024 * 1024;
 
 /**
  * RFC 6266 / RFC 5987. Agreement filenames contain the em dash in
@@ -67,9 +65,7 @@ export const documentRoutes: FastifyPluginAsyncZod = async (app) => {
       const user = request.requireArtist();
       const data = Buffer.from(request.body.data, 'base64');
       if (data.byteLength === 0) throw badRequest('That file is empty.');
-      if (data.byteLength > MAX_BYTES) {
-        throw badRequest('Files in the vault are limited to 15 MB in this phase.');
-      }
+      if (data.byteLength > DOCUMENT_MAX_BYTES) throw badRequest(DOCUMENT_TOO_LARGE);
 
       const storage = getStorage();
       const key = buildStorageKey(user.artistId, request.body.folder, request.body.filename);

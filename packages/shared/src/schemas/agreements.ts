@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { SIGNING_AFFIRMATIONS } from '../content/questions.js';
 import { agreementType, dealPath, documentFolder, uuid } from './common.js';
-import { AGREEMENT_STATUSES, AGREEMENT_VIEWS } from '../domain/enums.js';
+import { AGREEMENT_STATUSES, AGREEMENT_VIEWS, DOCUMENT_MAX_BYTES } from '../domain/enums.js';
 
 export const generateAgreementRequest = z.object({
   type: agreementType,
@@ -51,7 +51,7 @@ export const documentUploadRequest = z.object({
   filename: z.string().min(1).max(255),
   contentType: z.string().max(120),
   /** Base64 payload. Phase 1 keeps documents small; large audio moves to object storage in phase 2. */
-  data: z.string().max(20_000_000),
+  data: z.string().max(Math.ceil(DOCUMENT_MAX_BYTES / 3) * 4),
   songId: uuid.optional(),
 });
 export type DocumentUploadRequest = z.infer<typeof documentUploadRequest>;
