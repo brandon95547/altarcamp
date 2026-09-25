@@ -14,7 +14,7 @@ import { StatusBadge } from '../../components/ui/Badge.js';
 import { Button } from '../../components/ui/Button.js';
 import { Callout } from '../../components/ui/Callout.js';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card.js';
-import { Field, Select, TextInput } from '../../components/ui/Field.js';
+import { Field, MoneyInput, PercentInput, Select, TextInput } from '../../components/ui/Field.js';
 import { DefinitionRow, PageHeader, Spinner } from '../../components/ui/Misc.js';
 import { api } from '../../lib/api.js';
 import { formatDate, titleCase } from '../../lib/format.js';
@@ -280,11 +280,8 @@ export function AdminArtistPage() {
             </Field>
             <Field label="Artist master share %">
               {(props) => (
-                <TextInput
+                <PercentInput
                   {...props}
-                  type="number"
-                  min={0}
-                  max={100}
                   value={terms.masterArtist}
                   onChange={(event) =>
                     setTerms({ ...terms, masterArtist: Number(event.target.value) })
@@ -294,11 +291,8 @@ export function AdminArtistPage() {
             </Field>
             <Field label="Artist songwriting share %">
               {(props) => (
-                <TextInput
+                <PercentInput
                   {...props}
-                  type="number"
-                  min={0}
-                  max={100}
                   value={terms.compositionArtist}
                   onChange={(event) =>
                     setTerms({ ...terms, compositionArtist: Number(event.target.value) })
@@ -318,10 +312,7 @@ export function AdminArtistPage() {
                 .map((definition) => (
                   <label key={definition.key} className="grid gap-1">
                     <span className="text-sm text-ink-700">{definition.label}</span>
-                    <TextInput
-                      type="number"
-                      min={0}
-                      max={100}
+                    <PercentInput
                       value={revenue[definition.key] ?? 50}
                       onChange={(event) =>
                         setRevenue({ ...revenue, [definition.key]: Number(event.target.value) })
@@ -362,10 +353,8 @@ export function AdminArtistPage() {
 
           <Field label="Investment cap (USD)">
             {(props) => (
-              <TextInput
+              <MoneyInput
                 {...props}
-                type="number"
-                min={0}
                 value={terms.investmentCap}
                 onChange={(event) => setTerms({ ...terms, investmentCap: event.target.value })}
               />

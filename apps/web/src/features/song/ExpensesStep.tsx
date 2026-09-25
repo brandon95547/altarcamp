@@ -14,14 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button.js';
 import { Callout } from '../../components/ui/Callout.js';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card.js';
-import {
-  Checkbox,
-  Field,
-  RadioGroup,
-  Select,
-  TextArea,
-  TextInput,
-} from '../../components/ui/Field.js';
+import { Checkbox, Field, MoneyInput, RadioGroup, Select, TextArea, TextInput } from '../../components/ui/Field.js';
 import { Term } from '../../components/ui/Term.js';
 import { api } from '../../lib/api.js';
 import { cn } from '../../lib/cn.js';
@@ -166,10 +159,7 @@ export function ExpensesStep() {
                       )
                     }
                   />
-                  <TextInput
-                    type="number"
-                    min={0}
-                    step="0.01"
+                  <MoneyInput
                     aria-label="Amount"
                     value={expense.amountMinor / 100}
                     onChange={(event) =>
@@ -267,11 +257,8 @@ export function ExpensesStep() {
                 hint="Leave blank to agree budgets project by project."
               >
                 {(props) => (
-                  <TextInput
+                  <MoneyInput
                     {...props}
-                    type="number"
-                    min={0}
-                    step="0.01"
                     placeholder="5000"
                     value={cap}
                     onChange={(event) => setCap(event.target.value)}

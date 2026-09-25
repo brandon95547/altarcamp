@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { Button } from '../../components/ui/Button.js';
 import { Callout } from '../../components/ui/Callout.js';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card.js';
-import { TextArea, TextInput } from '../../components/ui/Field.js';
+import { PercentInput, TextArea } from '../../components/ui/Field.js';
 import { Spinner } from '../../components/ui/Misc.js';
 import { Term } from '../../components/ui/Term.js';
 import { api } from '../../lib/api.js';
@@ -115,11 +115,7 @@ export function InvitationPage() {
                   <span className="mb-1.5 block text-sm font-medium text-ink-900">
                     What percentage do you think is right?
                   </span>
-                  <TextInput
-                    type="number"
-                    min={0}
-                    max={100}
-                    step={0.01}
+                  <PercentInput
                     value={requested}
                     onChange={(event) => setRequested(event.target.value)}
                     placeholder={

@@ -1,4 +1,5 @@
 import { useId } from 'react';
+import { maskPhone, normalizeEmail, normalizeWebsite, phoneDigits } from '@altar/shared';
 import { cn } from '../../lib/cn.js';
 
 const CONTROL =
@@ -133,5 +134,137 @@ export function RadioGroup<T extends string>({
         );
       })}
     </div>
+  );
+}
+
+
+/* ── masked inputs ──────────────────────────────────────────────────────────
+ *
+ * Each of these keeps TextInput's signature exactly: the handler still receives a change
+ * event and still reads `event.target.value`. They rewrite that value before passing the
+ * event on, so a form wired with `onChange={set('phone')}` needs no change at all — which
+ * is the difference between masking the four fields that have one today and masking every
+ * field that ever gets added.
+ *
+ * The transforms themselves live in @altar/shared, where they are tested and where the API
+ * can read an address the same way the form wrote it.
+ */
+
+/**
+ * Formats as it is typed. See maskPhone: international numbers are deliberately left alone
+ * rather than forced into a US shape.
+ */
+export function PhoneInput({
+  value,
+  onChange,
+  ...props
+}: React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <TextInput
+      {...props}
+      type="tel"
+      inputMode="tel"
+      autoComplete="tel"
+      value={value}
+      onChange={(event) => {
+        const typed = event.target.value;
+        const previous = String(value ?? '');
+        let masked = maskPhone(typed);
+        // Backspacing a formatting character deletes no DIGIT, so the mask puts the
+        // character straight back and the field looks frozen. Read that as deleting the
+        // digit in front of it, which is what the user meant.
+        if (typed.length < previous.length && masked === previous) {
+          masked = maskPhone(phoneDigits(typed).slice(0, -1));
+        }
+        event.target.value = masked;
+        onChange?.(event);
+      }}
+    />
+  );
+}
+
+/**
+ * Trimmed and folded to lower case ON BLUR, not per keystroke — lowercasing under the
+ * cursor makes a field feel broken while someone is still typing it.
+ *
+ * The keyboard hints matter more than the normalising: a phone that capitalises the first
+ * letter and autocorrects the domain is the single most common way an address is entered
+ * wrong, and three attributes turn all of it off.
+ */
+export function EmailInput({
+  value,
+  onChange,
+  onBlur,
+  ...props
+}: React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <TextInput
+      {...props}
+      type="email"
+      inputMode="email"
+      autoComplete={props.autoComplete ?? 'email'}
+      autoCapitalize="off"
+      autoCorrect="off"
+      spellCheck={false}
+      value={value}
+      onChange={onChange}
+      onBlur={(event) => {
+        const normalized = normalizeEmail(event.target.value);
+        if (normalized !== event.target.value) {
+          event.target.value = normalized;
+          onChange?.(event as unknown as React.ChangeEvent<HTMLInputElement>);
+        }
+        onBlur?.(event);
+      }}
+    />
+  );
+}
+
+/**
+ * Given a scheme on blur when it has none. A bare host in an href is a RELATIVE PATH, so
+ * an artist who types "altar.camp" gets a link to a page on this site that does not exist.
+ */
+export function UrlInput({
+  value,
+  onChange,
+  onBlur,
+  ...props
+}: React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <TextInput
+      {...props}
+      type="url"
+      inputMode="url"
+      autoCapitalize="off"
+      spellCheck={false}
+      value={value}
+      onChange={onChange}
+      onBlur={(event) => {
+        const normalized = normalizeWebsite(event.target.value);
+        if (normalized !== event.target.value) {
+          event.target.value = normalized;
+          onChange?.(event as unknown as React.ChangeEvent<HTMLInputElement>);
+        }
+        onBlur?.(event);
+      }}
+    />
+  );
+}
+
+/**
+ * Money. The step and the decimal keypad are the whole point: `type="number"` alone gives
+ * a phone the full keyboard, and a contract amount typed on a phone is where that hurts.
+ */
+export function MoneyInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  return <TextInput type="number" inputMode="decimal" min={0} step="0.01" {...props} />;
+}
+
+/**
+ * A share, in percent. Bounded 0-100 here so the browser rejects a fourth participant on
+ * 40% before the split maths has to, and a decimal keypad for the same reason as money.
+ */
+export function PercentInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <TextInput type="number" inputMode="decimal" min={0} max={100} step="0.01" {...props} />
   );
 }

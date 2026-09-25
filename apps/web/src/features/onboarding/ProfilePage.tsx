@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button.js';
 import { Callout } from '../../components/ui/Callout.js';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card.js';
-import { Field, TextArea, TextInput } from '../../components/ui/Field.js';
+import { EmailInput, Field, TextArea, TextInput } from '../../components/ui/Field.js';
 import { Stepper } from '../../components/ui/Misc.js';
 import { Term } from '../../components/ui/Term.js';
 import { api } from '../../lib/api.js';
@@ -194,9 +194,8 @@ export function ProfilePage() {
             </Field>
             <Field label="Manager email">
               {(props) => (
-                <TextInput
+                <EmailInput
                   {...props}
-                  type="email"
                   value={form.managementEmail}
                   onChange={set('managementEmail')}
                 />
@@ -209,9 +208,8 @@ export function ProfilePage() {
             </Field>
             <Field label="Attorney email (optional)">
               {(props) => (
-                <TextInput
+                <EmailInput
                   {...props}
-                  type="email"
                   value={form.attorneyEmail}
                   onChange={set('attorneyEmail')}
                 />

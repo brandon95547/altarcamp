@@ -11,7 +11,7 @@ import { Badge, StatusBadge } from '../../components/ui/Badge.js';
 import { Button } from '../../components/ui/Button.js';
 import { Callout } from '../../components/ui/Callout.js';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card.js';
-import { Checkbox, Field, Select, TextInput } from '../../components/ui/Field.js';
+import { Checkbox, EmailInput, Field, Select, TextInput } from '../../components/ui/Field.js';
 import { api } from '../../lib/api.js';
 import { useMutation } from '../../lib/useApi.js';
 import { useSong } from './SongLayout.js';
@@ -239,9 +239,8 @@ export function CollaboratorsStep() {
 
             <Field label="Email" hint="Where their invitation and signing link go.">
               {(props) => (
-                <TextInput
+                <EmailInput
                   {...props}
-                  type="email"
                   value={form.email}
                   onChange={(event) => setForm({ ...form, email: event.target.value })}
                 />

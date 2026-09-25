@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/ui/Button.js';
 import { Callout } from '../../components/ui/Callout.js';
 import { Card, CardBody } from '../../components/ui/Card.js';
-import { Checkbox, Field, TextInput } from '../../components/ui/Field.js';
+import { Checkbox, EmailInput, Field, PhoneInput, TextInput, UrlInput } from '../../components/ui/Field.js';
 import { ApiError } from '../../lib/api.js';
 import { useAuth } from '../../lib/auth.js';
 
@@ -111,9 +111,8 @@ export function SignupPage() {
                 </Field>
                 <Field label="Email" required error={fieldError('email')}>
                   {(props) => (
-                    <TextInput
+                    <EmailInput
                       {...props}
-                      type="email"
                       required
                       autoComplete="email"
                       value={form.email}
@@ -123,10 +122,8 @@ export function SignupPage() {
                 </Field>
                 <Field label="Phone" error={fieldError('phone')}>
                   {(props) => (
-                    <TextInput
+                    <PhoneInput
                       {...props}
-                      type="tel"
-                      autoComplete="tel"
                       value={form.phone}
                       onChange={set('phone')}
                     />
@@ -166,9 +163,8 @@ export function SignupPage() {
                 </Field>
                 <Field label="Website" error={fieldError('website')}>
                   {(props) => (
-                    <TextInput
+                    <UrlInput
                       {...props}
-                      type="url"
                       placeholder="https://"
                       value={form.website}
                       onChange={set('website')}

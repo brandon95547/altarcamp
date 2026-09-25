@@ -8,6 +8,7 @@ export * from './domain/splits.js';
 export * from './domain/revenue.js';
 export * from './domain/expenses.js';
 export * from './domain/validation.js';
+export * from './domain/contact.js';
 export * from './domain/deal.js';
 
 export * from './content/glossary.js';

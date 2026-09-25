@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button.js';
 import { Callout } from '../../components/ui/Callout.js';
 import { Card, CardBody } from '../../components/ui/Card.js';
-import { Field, TextInput } from '../../components/ui/Field.js';
+import { EmailInput, Field, TextInput } from '../../components/ui/Field.js';
 import { ApiError } from '../../lib/api.js';
 import { isStaff, useAuth } from '../../lib/auth.js';
 
@@ -46,9 +46,8 @@ export function LoginPage() {
 
               <Field label="Email">
                 {(props) => (
-                  <TextInput
+                  <EmailInput
                     {...props}
-                    type="email"
                     autoComplete="email"
                     required
                     value={email}
