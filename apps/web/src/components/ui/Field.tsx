@@ -184,11 +184,18 @@ export function PhoneInput({
   value,
   onChange,
   country,
+  placeholder,
   ...props
 }: React.InputHTMLAttributes<HTMLInputElement> & { country?: string | null }) {
+  const isUs = country?.toUpperCase() === 'US';
   return (
     <TextInput
       {...props}
+      // The mask formats as digits arrive, so an empty field gave no sign of it — the
+      // brackets only appeared at the fourth digit, and a mask nobody can see reads as no
+      // mask. The US gets its shape shown up front, with 555, the exchange reserved for
+      // fictional numbers. Elsewhere there is no one shape to show, so none is invented.
+      placeholder={placeholder ?? (isUs ? '(555) 123-4567' : undefined)}
       type="tel"
       inputMode="tel"
       autoComplete="tel"
